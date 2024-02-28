@@ -25,7 +25,7 @@ import {
 } from "@/lib/react-query/queriesAndMutations";
 import { useRouter } from "next/navigation";
 
-export const Page = () => {
+const Page = () => {
   const { toast } = useToast();
   const router = useRouter();
   const { mutateAsync: createUserAccount, isPending: isCreatingAccount } =
