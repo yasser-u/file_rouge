@@ -137,5 +137,3 @@ export const Page = () => {
     </Form>
   );
 };
-
-export default Page;

@@ -1,3 +1,3 @@
 export default function Page() {
-    return <h1>Fil d'actulité</h1>;
+  return <h1>Fil d&apos;actulité</h1>;
 }
