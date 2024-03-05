@@ -1,3 +1,5 @@
+import { Button } from "@/components/ui/button";
+
 export default function Page() {
   return (
     <div className="divConnexion">
@@ -11,7 +13,6 @@ export default function Page() {
             className="inputConnexion"
             type="text"
             id="username"
-            value="...."
             required
           />
         </div>
@@ -23,13 +24,15 @@ export default function Page() {
             className="inputMDP"
             type="password"
             id="password"
-            value="..."
             required
           />
         </div>
-        <button className="BtnConnexion" type="submit">
+        <Button className="BtnConnexion" type="submit">
           Connexion
-        </button>
+        </Button>
+        {/* <ButtonConnexion type="submit" className="BtnConnexion">
+          Connexion
+        </ButtonConnexion> */}
       </form>
     </div>
   );
