@@ -18,7 +18,7 @@ export default function Home() {
   return (
     <main>
       {/* <h1> hello my friende ! </h1> */}
-      <PageAccueil />
+      {/* <PageAccueil /> */}
       <Button
         variant="ghost"
         className="shad-button_ghost"

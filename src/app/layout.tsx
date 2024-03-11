@@ -3,6 +3,7 @@ import { Inter } from "next/font/google";
 import "./globals.css";
 import { Query } from "appwrite";
 import { QueryProvider } from "@/lib/react-query/QueryProvider";
+import PageAccueil from "./accueil/page";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -20,7 +21,17 @@ export default function RootLayout({
     <html lang="en">
       <body className={inter.className}>
         <QueryProvider>
-          <div>{children}</div>
+          {/* <div> */}
+          <header>
+              <PageAccueil /> 
+          </header>
+
+            {children}
+
+          <footer>
+            <p>Footer</p>
+          </footer>
+            {/* </div> */}
         </QueryProvider>
       </body>
     </html>
