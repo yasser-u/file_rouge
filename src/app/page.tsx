@@ -4,14 +4,18 @@ import { useSignOutAccountMutation } from "@/lib/react-query/queriesAndMutations
 import Image from "next/image";
 import PageAccueil from "./accueil/page";
 import { Button } from "@/components/ui/button";
+import { useRouter } from "next/navigation";
 
 export default function Home() {
   const { mutate: signOut, isSuccess } = useSignOutAccountMutation();
+  const router = useRouter();
 
   const signOutAndRedirect = () => {
     signOut();
     if (isSuccess) {
-      return <PageAccueil />;
+      router.push("/");
+
+      console.log("sign out success");
     }
   };
 
