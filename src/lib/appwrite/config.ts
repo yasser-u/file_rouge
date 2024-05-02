@@ -6,8 +6,10 @@ export const appwriteConfig = {
     databaseId : process.env.NEXT_PUBLIC_APPWRITE_DATABASE_ID || '',
     // storageId : process.env.VITE_APPWRITE_STORAGE_ID,
     userCollectionId : process.env.NEXT_PUBLIC_APPWRITE_USER_COLLECTION_ID || '',
-    // postCollectionId : import.meta.env.VITE_APPWRITE_POST_COLLECTION_ID,
-    // savesCollectionId : import.meta.env.VITE_APPWRITE_SAVES_COLLECTION_ID,
+    artisanCollectionId : process.env.NEXT_PUBLIC_APPWRITE_ARTISAN_COLLECTION_ID || '',
+    produitCollectionId : process.env.NEXT_PUBLIC_APPWRITE_PRODUIT_COLLECTION_ID || '',
+    postCollectionId : process.env.NEXT_PUBLIC_APPWRITE_POST_COLLECTION_ID || '',
+    // savesCollectionId : process.env.NEXT_PUBLIC_APPWRITE_USER_COLLECTION_ID || '',
     
 }
 

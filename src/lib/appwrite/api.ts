@@ -10,6 +10,7 @@ import { account, appwriteConfig, avatars, databases, storage } from './config';
  */
 export async function createUserAccount(user: INewUser) {
     try {
+        // FIXME : add the team artisan permission to this user
         const newAccount = await account.create(
             ID.unique(),
             user.email,
@@ -36,6 +37,48 @@ export async function createUserAccount(user: INewUser) {
     }
 }
 
+
+// FIXME l'intrface : adapte aux propriétés de l'artisan
+export async function createArtisanAcount(user: INewUser) {
+    try {
+        const newAccount = await account.create(
+            ID.unique(),
+            user.email,
+            user.password,
+            user.name,
+        );
+
+        if(!newAccount) throw Error;
+
+        const avatarUrl = avatars.getInitials(user.name);
+
+        const newUser = await saveUserToDB({
+            accountId: newAccount.$id,
+            email: newAccount.email,
+            name: newAccount.name,
+            username: user.username,
+            imageUrl: avatarUrl
+        });
+
+        const newArtisan = await saveArtisanToDB({
+            accountId: newAccount.$id,
+            email: newAccount.email,
+            name: newAccount.name,
+            username: user.username,
+            imageUrl: avatarUrl
+        });
+
+
+        return newArtisan
+    } catch (error) {
+        console.log(error);
+        return error;
+    }
+            
+}
+
+
+
 /**
  * function to create an user in our database, linked with the one from Auth
  * @param user 
@@ -52,6 +95,28 @@ export async function saveUserToDB(user: {
         const newUser = await databases.createDocument(
             appwriteConfig.databaseId,
             appwriteConfig.userCollectionId,
+            ID.unique(),
+            user,
+        )
+
+        return newUser
+    } catch (error) {
+        console.log(error)
+    }
+}
+
+// Fixme l'interface : adapte aux propriétés de l'artisan
+export async function saveArtisanToDB(user: {
+    accountId: string;
+    email: string;
+    name: string;
+    imageUrl: URL;
+    username?: string;
+}) {
+    try {
+        const newUser = await databases.createDocument(
+            appwriteConfig.databaseId,
+            appwriteConfig.artisanCollectionId,
             ID.unique(),
             user,
         )
