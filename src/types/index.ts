@@ -57,3 +57,26 @@ export type INewUser = {
   username: string;
   password: string;
 };
+
+export type INewArtisan = {
+  name: string;
+  email: string;
+  username?: string;
+  password: string;
+  categorie_activite: string;
+  adresse?: string;
+  code_postal?: string;
+  ville: string;
+  telephone?: string;
+};
+
+// produits
+
+export interface IProduct {
+  nom: string;
+  description: string;
+  tags: string;
+  createur: string;
+  imagesUrl: string;
+  imageIds: string;
+}

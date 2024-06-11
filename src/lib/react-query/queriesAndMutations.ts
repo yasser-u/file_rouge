@@ -1,12 +1,19 @@
-import { INewPost, INewUser, IUpdatePost } from '@/types';
+import {INewArtisan, INewPost, INewUser, IUpdatePost} from '@/types';
 import {
     useQuery,
     useMutation,
     useQueryClient,
-    useInfiniteQuery,
+    useInfiniteQuery, UseMutationOptions,
 } from '@tanstack/react-query';
 import { QUERY_KEYS } from './queryKeys';
-import { createUserAccount, signInAccount, signOutAccount } from '../appwrite/api';
+import {
+    createArtisanAccount,
+    createUserAccount,
+    signInAccount,
+    signOutAccount,
+    addProductWithFiles,
+    getProductsByCreator
+} from '../appwrite/api';
 
 /**
  * 
@@ -15,6 +22,16 @@ import { createUserAccount, signInAccount, signOutAccount } from '../appwrite/ap
 export const useCreateUserAccountMutation = () => {
     return useMutation({
         mutationFn: (user: INewUser) => createUserAccount(user)
+    })
+}
+
+/**
+ *
+ * @returns
+ */
+export const useCreateArtisanAccountMutation = () => {
+    return useMutation({
+        mutationFn: (user: INewArtisan) => createArtisanAccount(user)
     })
 }
 
@@ -40,6 +57,24 @@ export const useSignOutAccountMutation = () => {
         mutationFn: signOutAccount
     })
 }
+
+
+export const useAddProductWithFilesMutation = () => {
+    return useMutation({
+        mutationFn: (data: { product: { nom: string; description: string; tags: string; }, file: File }) => addProductWithFiles(data.product, data.file)
+    })
+}
+
+export const useGetProductsByCreatorMutation = (creatorId: string) => {
+    return useQuery({
+        queryKey: [QUERY_KEYS.GET_PRODUCTS_BY_CREATOR, creatorId],
+        queryFn: () => getProductsByCreator(creatorId),
+        enabled: !!creatorId
+    })
+
+}
+
+// -----------------------------------------------------------
 
 // export const useCreatePostMutation = () => {
 //     const queryClient = useQueryClient();

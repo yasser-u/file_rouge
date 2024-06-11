@@ -1,0 +1,142 @@
+ @tailwind base;
+@tailwind components;
+@tailwind utilities;
+ 
+@layer base {
+  :root {
+      --background: #17042F;
+      --foreground: #330247;
+
+      --background2: rgba(202, 161, 219, 0.69) ;
+
+      --card: #DBEAFF;
+      --card-foreground: #FFE8AC;
+
+      --popover: #FFFFFF;
+      --popover-foreground: #000000;
+
+      --primary: #6F57D1;
+      --primary-foreground: #FFFFFF;
+
+      --secondary: #FFE8AC;
+      --secondary-foreground: #000000;
+
+      --muted: #F5F3F7;
+      --muted-foreground: #FFE8AC;
+
+      --accent: #FFE8AC;
+      --accent-foreground: #000000;
+
+      --destructive: #FFE1DF;
+      --destructive-foreground: #6F57D1;
+
+      --border: #E0E0E0;
+      --input: #FFFFFF;
+      --ring: #6F57D1;
+
+    --radius: 1rem;
+  }
+
+
+  .dark {
+      --background: #17042F;
+      --foreground: #FFF1CB;
+
+      --card: #8C7098;
+      --card-foreground: #FFE8AC;
+
+      --popover: #17042F;
+      --popover-foreground: #FFFFFF;
+
+      --primary: #FFE8AC;
+      --primary-foreground: #17042F;
+
+      --secondary: #6F57D1;
+      --secondary-foreground: #FFFFFF;
+
+      --muted: #8C7098;
+      --muted-foreground: #FFF1CB;
+
+      --accent: #FFE8AC;
+      --accent-foreground: #17042F;
+
+      --destructive: #FFE1DF;
+      --destructive-foreground: #6F57D1;
+
+      --border: #8C7098;
+      --input: #8C7098;
+      --ring: #FFE8AC;
+
+  }
+}
+ 
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+}
+
+ html, body {
+     background: linear-gradient(to bottom, #E3CBF0, #7E4AD3);
+     height: 100%;
+     margin: 0;
+ }
+/*body {*/
+/*  background: linear-gradient(to bottom, #E3CBF0, #7E4AD3);*/
+/*  height: 100%;*/
+/*}*/
+
+.custom-title {
+ color: #6F57D1;
+ font-size: 48px;
+  font-weight: 600;
+}
+
+/* button octogon sign-up */
+
+.octagon {
+  width: 264px;
+  height: 255px;
+  background: #2E0141;
+  clip-path: polygon(30% 0%, 70% 0%, 100% 30%, 100% 70%, 70% 100%, 30% 100%, 0% 70%, 0% 30%);
+
+  cursor: pointer;
+  overflow: hidden;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+ .octagon div {
+   z-index: 2;
+   color: #FFF6F6;
+ }
+
+ .octagon:before, .octagon:after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+
+  background: inherit;
+}
+
+.octagon:before {
+  transform: rotate(45deg);
+}
+
+.octagon:after {
+  transform: rotate(-45deg);
+}
+/* produits */
+
+.product-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    grid-gap: 10px;
+
+
+}

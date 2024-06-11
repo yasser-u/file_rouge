@@ -1,17 +1,15 @@
-import { Button } from "../ui/button";
+import {Button} from "../ui/button";
 import { useRouter } from "next/navigation";
 import {
   Form,
   FormControl,
   FormField,
   FormItem,
-  FormLabel,
   FormMessage,
 } from "../ui/form";
-import Image from "next/image";
 import { Input } from "../ui/input";
 import { useForm } from "react-hook-form";
-import { signupValidation } from "@/lib/validation";
+import {signupParticulier} from "@/lib/validation";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { toast } from "../ui/use-toast";
@@ -21,7 +19,11 @@ import {
 } from "@/lib/react-query/queriesAndMutations";
 import { Loader } from "lucide-react";
 
-const SignUpParticulier = () => {
+interface SignUpParticulierProps {
+    resetType: () => void;
+}
+
+const SignUpParticulier: React.FC<SignUpParticulierProps>  = ({ resetType }) => {
   // initialize
   const router = useRouter();
   const { mutateAsync: createUserAccount, isPending: isCreatingAccount } =
@@ -30,8 +32,8 @@ const SignUpParticulier = () => {
     useSignInAccountMutation();
 
   // 1. Define your form.
-  const form = useForm<z.infer<typeof signupValidation>>({
-    resolver: zodResolver(signupValidation),
+  const form = useForm<z.infer<typeof signupParticulier>>({
+    resolver: zodResolver(signupParticulier),
     defaultValues: {
       name: "",
       username: "",
@@ -41,7 +43,7 @@ const SignUpParticulier = () => {
   });
 
   // 2. Define a submit handler.
-  async function onSubmit(values: z.infer<typeof signupValidation>) {
+  async function onSubmit(values: z.infer<typeof signupParticulier>) {
     // create a user
     const newUser = await createUserAccount(values);
 
@@ -78,7 +80,7 @@ const SignUpParticulier = () => {
     if (newUser) {
       form.reset();
 
-      router.push("/");
+      router.push("/accueil");
     } else {
       return toast({ title: "Sign in failed. Try again." });
     }
@@ -86,26 +88,8 @@ const SignUpParticulier = () => {
 
   return (
     <>
-      <div>signUpParticulier</div>
-
       <Form {...form}>
-        <div className="sm:w-420  flex-col bg-gray-400 flex-center p-10">
-          <Image
-            className="mx-auto"
-            src="/assets/images/logo.svg"
-            alt="logo"
-            width={500}
-            height={500}
-          />
-
-          <h2 className="h3-bold md:h2-bold pt-5 sm:pt-12">
-            Create a new account
-          </h2>
-          <p className="text-light-3 small-medium md:base-regular mt-2">
-            {" "}
-            To use snapgram, please enter your details
-          </p>
-
+        <div className="h-full w-full flex-col flex-center p-10">
           <form
             onSubmit={form.handleSubmit(onSubmit)}
             className="flex flex-col gap-5 w-full mt-4"
@@ -115,9 +99,8 @@ const SignUpParticulier = () => {
               name="name"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Name</FormLabel>
                   <FormControl>
-                    <Input type="text" className="shad-input" {...field} />
+                    <Input type="text" placeholder="Nom" className="shad-input" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -129,9 +112,8 @@ const SignUpParticulier = () => {
               name="username"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Username</FormLabel>
                   <FormControl>
-                    <Input type="text" className="shad-input" {...field} />
+                    <Input type="text" placeholder="Prénom" className="shad-input" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -143,9 +125,8 @@ const SignUpParticulier = () => {
               name="email"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Email</FormLabel>
                   <FormControl>
-                    <Input type="email" className="shad-input" {...field} />
+                    <Input type="email" placeholder="Email" className="shad-input" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -157,33 +138,34 @@ const SignUpParticulier = () => {
               name="password"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Passeword</FormLabel>
                   <FormControl>
-                    <Input type="password" className="shad-input" {...field} />
+                    <Input type="password" placeholder="Mot de passe" className="shad-input" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
               )}
             />
-            <Button type="submit" className="shad-button_primary">
-              {isCreatingAccount ? (
-                <div className="flex-center gap-2">
-                  <Loader /> loading...
-                </div>
-              ) : (
-                "Sing up"
-              )}
-            </Button>
+              <div className="flex justify-evenly">
+                  <Button onClick={() => { resetType(); router.push('/sign-up'); }} className="buttonVariants({ variant: 'outline' }) min-w-40">
+                      Annuler
+                  </Button>
 
-            <p className="text-small-regular text-light-2 text-center mt-2">
-              Already have an account ?
-              {/* <Link
-          to="/sign-in"
-          className="text-primary-500 text-small-semibold ml-1 "
-        >
-          Log in
-        </Link> */}
-            </p>
+                  <div className="flex flex-col items-start">
+                      <Button type="submit" className="shad-button_primary min-w-40">
+                          {isCreatingAccount ? (
+                              <div className="flex-center gap-2">
+                                  <Loader /> loading...
+                              </div>
+                          ) : (
+                              "Sing up"
+                          )}
+                      </Button>
+
+                      <p className="text-small-regular text-light-2 text-center mt-1 text-white">
+                          Déjà inscrit ?
+                      </p>
+                  </div>
+              </div>
           </form>
         </div>
       </Form>
