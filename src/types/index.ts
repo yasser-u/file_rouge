@@ -44,11 +44,12 @@ export type IUpdatePost = {
 
 export type IUser = {
   id: string;
-  name: string;
   username: string;
   email: string;
+  imageId: string;
   imageUrl: string;
-  bio: string;
+  name: string;
+  artisanId: string; // Relationship with artisanId
 };
 
 export type INewUser = {
@@ -71,8 +72,8 @@ export type INewArtisan = {
 };
 
 // produits
-
 export interface IProduct {
+  id: string;
   nom: string;
   description: string;
   tags: string;

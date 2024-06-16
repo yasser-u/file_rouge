@@ -1,5 +1,5 @@
 import {ID, Databases, Account, Storage, Avatars, Teams, Query} from 'appwrite';
-import {INewArtisan, INewPost, INewUser, IUpdatePost} from "@/types";
+import {INewArtisan, INewPost, INewUser, IUpdatePost, IUser} from "@/types";
 import { appwriteConfig, client } from './config';
 
 
@@ -121,7 +121,7 @@ export async function saveUserToDB(user: {
     imageUrl: URL;
     username?: string;
     artisanId?: string;
-}) {
+    }) {
     try {
         const newUser = await databases.createDocument(
             appwriteConfig.databaseId,
@@ -206,6 +206,7 @@ export async function signInAccount(user: { email:string; password: string} ) {
  * Récupère le compte utilisateur actuel.
  * @returns Le compte utilisateur actuel.
  * @throws Une erreur si la récupération du compte échoue.
+ * @todo Ajouter une vérification pour s'assurer que l'utilisateur est lié à un compte.
  */
 export async function getAccount() {
     try {
@@ -217,6 +218,12 @@ export async function getAccount() {
     }
 }
 
+/**
+ * Récupère l'utilisateur actuel.
+ * @returns L'utilisateur actuel.
+ * @throws Une erreur si la récupération de l'utilisateur échoue.
+ * @todo Ajouter une vérification pour s'assurer que l'utilisateur est lié à un compte.
+ */
 export async function getCurrentUser() {
     try {
         const currentAccount = await getAccount();
@@ -225,52 +232,28 @@ export async function getCurrentUser() {
         const currentUser = await databases.listDocuments(
             appwriteConfig.databaseId,
             appwriteConfig.userCollectionId,
-            // [Query.equal("accountId", currentAccount.$id)]
+            [Query.equal('email', currentAccount.email)]
         );
 
         if (currentUser.documents.length === 0) throw new Error('No matching user document');
 
-        return currentUser.documents[0];
+        // Ensure the returned user object matches the IUser type
+        const user: IUser = {
+            id: currentUser.documents[0].$id,
+            username: currentUser.documents[0].username,
+            email: currentUser.documents[0].email,
+            imageId: currentUser.documents[0].imageId,
+            imageUrl: currentUser.documents[0].imageUrl,
+            name: currentUser.documents[0].name,
+            artisanId: currentUser.documents[0].artisanId.$id,
+        };
+
+        return user;
     } catch (error) {
         console.log(error);
         throw error;
     }
 }
-
-
-
-
-// export async function getCurrentUser() {
-//     try {
-//       const currentAccount = await getAccount();
-//
-//       if (!currentAccount) throw Error;
-//
-//       const currentUser = await databases.listDocuments(
-//         appwriteConfig.databaseId,
-//         appwriteConfig.userCollectionId,
-//         [Query.equal("accountId", currentAccount.$id)]
-//       );
-//
-//       if (!currentUser) throw Error;
-//
-//       return currentUser.documents[0];
-//     } catch (error) {
-//       console.log(error);
-//       return null;
-//     }
-// }
-//
-// // ============================== GET ACCOUNT
-// export async function getAccount() {
-//     try {
-//         const currentAccount = await account.get();
-//
-//         return currentAccount;
-//     } catch (error) {
-//         console.log(error);
-//     }
-// }
 
 /**
  * function to sign OUT from the account (se déconnecter)
@@ -279,12 +262,20 @@ export async function getCurrentUser() {
  */
 export async function signOutAccount() {
     try {
-        const session = await account.deleteSession("current");
+        // Check if there is a current session
+        const currentSession = await account.get();
 
-
-        return session;
+        // If there is a current session, delete it
+        if (currentSession) {
+            const session = await account.deleteSession("current");
+            return session;
+        } else {
+            // If there is no current session, return a message or handle it as you see fit
+            console.log("No active session to delete.");
+        }
     } catch (error) {
         console.log(error)
+        throw error;
     }
 }
 
@@ -298,7 +289,9 @@ export async function addProductWithFiles(
     product: {
         nom: string;
         description: string;
-        tags: string; }, file: File) {
+        tags: string;
+        createur: string;
+        }, file: File) {
     try {
         let newProduct ;
         // Upload the files
@@ -312,7 +305,8 @@ export async function addProductWithFiles(
                 // Add the product with the file links
                 newProduct = await addProduct({
                     ...product,
-                    imagesUrl: fileUrl
+                    imagesUrl: fileUrl,
+                    imagesId: uploadedFiles.$id
                 });
             } else {
                 console.error("No file URL provided");
@@ -330,9 +324,12 @@ export async function addProductWithFiles(
 // addProduct
 export async function addProduct(
     product: {
+        nom: string;
         description: string;
         tags: string;
         imagesUrl: URL;
+        imagesId: string;
+        createur: string;
 
     }) {
     try {
@@ -409,12 +406,37 @@ export async function deleteFile(fileId: string) {
     }
 }
 
+export async function deleteProduct(productId: string) {
+    try {
+        // Récupérer le produit à partir de son ID
+        const product = await databases.getDocument(
+            appwriteConfig.databaseId,
+            appwriteConfig.produitCollectionId,
+            productId
+        );
 
+        // Supprimer l'image associée au produit
+        if (product.imageId) {
+            await deleteFile(product.imageId);
+        }
+
+        // Supprimer le produit
+        const result = await databases.deleteDocument(
+            appwriteConfig.databaseId,
+            appwriteConfig.produitCollectionId,
+            productId,
+        );
+
+        return result;
+    } catch (error) {
+        console.error("Error deleting product: ", error);
+        throw error;
+    }
+}
 
 
 // --------------------------------------------------------------------------
 
-//
 // export async function createPost(post: INewPost) {
 //     try {
 //         // upload image to storage

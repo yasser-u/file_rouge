@@ -1,21 +1,21 @@
 import {Button} from "../ui/button";
 import { useRouter } from "next/navigation";
 import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormMessage,
+    Form,
+    FormControl,
+    FormField,
+    FormItem,
+    FormMessage,
 } from "../ui/form";
 import { Input } from "../ui/input";
 import { useForm } from "react-hook-form";
 import {signupParticulier} from "@/lib/validation";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { toast } from "../ui/use-toast";
+import { useToast } from "../ui/use-toast";
 import {
-  useCreateUserAccountMutation,
-  useSignInAccountMutation,
+    useCreateUserAccountMutation,
+    useSignInAccountMutation,
 } from "@/lib/react-query/queriesAndMutations";
 import { Loader } from "lucide-react";
 
@@ -24,71 +24,51 @@ interface SignUpParticulierProps {
 }
 
 const SignUpParticulier: React.FC<SignUpParticulierProps>  = ({ resetType }) => {
-  // initialize
-  const router = useRouter();
-  const { mutateAsync: createUserAccount, isPending: isCreatingAccount } =
-    useCreateUserAccountMutation();
-  const { mutateAsync: signInAccount, isPending: isSigningIn } =
-    useSignInAccountMutation();
+    const router = useRouter();
+    const { mutateAsync: createUserAccount, isPending: isCreatingAccount } =
+        useCreateUserAccountMutation();
+    const { mutateAsync: signInAccount, isPending: isSigningIn } =
+        useSignInAccountMutation();
+    const { toast } = useToast();
 
-  // 1. Define your form.
-  const form = useForm<z.infer<typeof signupParticulier>>({
-    resolver: zodResolver(signupParticulier),
-    defaultValues: {
-      name: "",
-      username: "",
-      email: "",
-      password: "",
-    },
-  });
-
-  // 2. Define a submit handler.
-  async function onSubmit(values: z.infer<typeof signupParticulier>) {
-    // create a user
-    const newUser = await createUserAccount(values);
-
-    // toaster in case the creation of account fail
-    if (!newUser) {
-      return toast({
-        title: "Sign up failed. Try again.",
-      });
-    }
-
-    const session = await signInAccount({
-      email: values.email,
-      password: values.password,
+    const form = useForm<z.infer<typeof signupParticulier>>({
+        resolver: zodResolver(signupParticulier),
+        defaultValues: {
+            name: "",
+            username: "",
+            email: "",
+            password: "",
+        },
     });
 
-    // toaster in case the signing fail
-    if (!session) {
-      return toast({
-        title: "Sign in failed. Try again.",
-      });
+    async function onSubmit(values: z.infer<typeof signupParticulier>) {
+        try {
+            await createUserAccount(values);
+            await signInAccount({
+                email: values.email,
+                password: values.password,
+            });
+            form.reset();
+            router.push("/accueil");
+        } catch (error) {
+            if (error instanceof Error) {
+                toast({
+                    variant: "destructive",
+                    title: "Une erreur s'est produite lors de l'inscription",
+                    description: error.message,
+                });
+            }
+        }
     }
-
-    // const isLoggedIn = await checkAuthUser();
-
-    // if (isLoggedIn) {
-    //   form.reset();
-
-    //   navigate("/");
-    // } else {
-    //   return toast({ title: "Sign in failed. Try again." });
-    // }
-
-    // FIXME: remove this block when the checkAuthUser function is implemented
-    if (newUser) {
-      form.reset();
-
-      router.push("/accueil");
-    } else {
-      return toast({ title: "Sign in failed. Try again." });
-    }
-  }
 
   return (
     <>
-      <Form {...form}>
+        {isCreatingAccount ? (
+            <div className="flex justify-center items-center h-screen">
+                <Loader />
+            </div>
+        ) : (
+            <Form {...form}>
         <div className="h-full w-full flex-col flex-center p-10">
           <form
             onSubmit={form.handleSubmit(onSubmit)}
@@ -151,16 +131,7 @@ const SignUpParticulier: React.FC<SignUpParticulierProps>  = ({ resetType }) => 
                   </Button>
 
                   <div className="flex flex-col items-start">
-                      <Button type="submit" className="shad-button_primary min-w-40">
-                          {isCreatingAccount ? (
-                              <div className="flex-center gap-2">
-                                  <Loader /> loading...
-                              </div>
-                          ) : (
-                              "Sing up"
-                          )}
-                      </Button>
-
+                      <Button type="submit" className="shad-button_primary min-w-40"> Sing up </Button>
                       <p className="text-small-regular text-light-2 text-center mt-1 text-white">
                           Déjà inscrit ?
                       </p>
@@ -169,6 +140,7 @@ const SignUpParticulier: React.FC<SignUpParticulierProps>  = ({ resetType }) => 
           </form>
         </div>
       </Form>
+        )}
     </>
   );
 };

@@ -12,7 +12,7 @@ import {
     signInAccount,
     signOutAccount,
     addProductWithFiles,
-    getProductsByCreator
+    getProductsByCreator, getCurrentUser, deleteProduct
 } from '../appwrite/api';
 
 /**
@@ -60,8 +60,15 @@ export const useSignOutAccountMutation = () => {
 
 
 export const useAddProductWithFilesMutation = () => {
+    const queryClient = useQueryClient();
+
     return useMutation({
-        mutationFn: (data: { product: { nom: string; description: string; tags: string; }, file: File }) => addProductWithFiles(data.product, data.file)
+        mutationFn: (data: { product: { nom: string; description: string; tags: string; createur: string }, file: File }) => addProductWithFiles(data.product, data.file),
+        onSuccess: () => {
+            queryClient.invalidateQueries({
+                queryKey: [QUERY_KEYS.GET_PRODUCTS_BY_CREATOR]
+            })
+        }
     })
 }
 
@@ -72,6 +79,26 @@ export const useGetProductsByCreatorMutation = (creatorId: string) => {
         enabled: !!creatorId
     })
 
+}
+
+export const useGetCurrentUserMutation = () => {
+    return useQuery({
+        queryKey : [QUERY_KEYS.GET_CURRENT_USER],
+        queryFn: getCurrentUser
+    })
+}
+
+export const useDeleteProductMutation = () => {
+    const queryClient = useQueryClient();
+
+    return useMutation({
+        mutationFn: (productId: string) => deleteProduct(productId),
+        onSuccess: () => {
+            queryClient.invalidateQueries( {
+                queryKey: [QUERY_KEYS.GET_PRODUCTS_BY_CREATOR]
+            })
+        }
+    })
 }
 
 // -----------------------------------------------------------

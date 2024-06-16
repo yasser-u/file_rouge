@@ -2,28 +2,14 @@ import Link from "next/link";
 
 const PageAccueil = () => {
   return (
-    <>
-       <h1>Accueil 555</h1>
+        <div className="h-full">
+            <div className="bg-violet-950  text-white min-h-[8%] max-h-[105px]"
+                 style={{backgroundColor: 'var(--background)', color: 'var(--card-foreground)'}}> Barre de recherche </div>
+            <div className="overflow-y-auto h-[92%]">
+                <h1>Accueil</h1>
+            </div>
 
-      {/*<nav className="flex w-screen h-16 items-center fixed bg-purple-200 drop-shadow-lg">*/}
-      {/*  <ul className="flex w-11/12 justify-between ml-5">*/}
-      {/*    <li>*/}
-      {/*      <Link href="./contact">Contact</Link>*/}
-      {/*    </li>*/}
-      {/*    <li>*/}
-      {/*      <Link href="./about">artisans</Link>*/}
-      {/*    </li>*/}
-      {/*    <div className="flex justify-center space-x-8">*/}
-      {/*      <li>*/}
-      {/*        <Link href="/sign-in">Connexion</Link>*/}
-      {/*      </li>*/}
-      {/*      <li>*/}
-      {/*        <Link href="./sign-up">Inscription</Link>*/}
-      {/*      </li>*/}
-      {/*    </div>*/}
-      {/*  </ul>*/}
-      {/*</nav>*/}
-    </>
+        </div>
   );
 };
 

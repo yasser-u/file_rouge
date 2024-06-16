@@ -4,6 +4,7 @@ import "../../../styles/globals.css";
 import { Query } from "appwrite";
 import { QueryProvider } from "@/lib/react-query/QueryProvider";
 import HeaderAvConnexion from "@/components/personaliser/HeaderAvConnexion";
+import {Toaster} from "@/components/ui/toaster";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -29,7 +30,7 @@ export default function RootLayout({
               {children}
           </div>
 
-
+          <Toaster />
       </QueryProvider>
       </body>
       </html>
