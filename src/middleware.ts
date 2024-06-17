@@ -6,12 +6,13 @@ export function middleware(request: NextRequest) {
     const isAuthPage =
         request.nextUrl.pathname === '/sign-in' ||
         request.nextUrl.pathname === '/sign-up';
+    const isHomePage = request.nextUrl.pathname === '/';
 
     if (isAuthenticated && isAuthPage) {
         return NextResponse.redirect(new URL('/accueil', request.url));
     }
 
-    if (!isAuthenticated && !isAuthPage) {
+    if (!isAuthenticated && !isAuthPage && !isHomePage) {
         return NextResponse.redirect(new URL('/sign-in', request.url));
     }
 
@@ -20,15 +21,6 @@ export function middleware(request: NextRequest) {
 
 export const config = {
     matcher: [
-        /*
-         * Correspond à toutes les requêtes sauf celles commençant par :
-         * - _next
-         * - static (les fichiers statiques)
-         * - favicon.ico
-         * - images
-         * - (authentification)
-         * - (preConnection)
-         */
-        '/((?!_next|static|favicon.ico|images|\\(authentification\\)|\\(preConnection\\)|\\/).*)',
+        '/((?!_next|static|favicon.ico|images|\\(authentification\\)|\\(preConnection\\)).*)',
     ],
 };
