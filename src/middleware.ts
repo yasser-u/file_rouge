@@ -4,15 +4,15 @@ import type { NextRequest } from 'next/server';
 export function middleware(request: NextRequest) {
     const isAuthenticated = request.cookies.has('appwriteSession');
     const isAuthPage =
-        request.nextUrl.pathname === '/login' ||
-        request.nextUrl.pathname === '/register';
+        request.nextUrl.pathname === '/sign-in' ||
+        request.nextUrl.pathname === '/sign-up';
 
     if (isAuthenticated && isAuthPage) {
         return NextResponse.redirect(new URL('/', request.url));
     }
 
     if (!isAuthenticated && !isAuthPage) {
-        return NextResponse.redirect(new URL('/login', request.url));
+        return NextResponse.redirect(new URL('/', request.url));
     }
 
     return NextResponse.next();
