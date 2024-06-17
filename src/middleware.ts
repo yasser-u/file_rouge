@@ -1,21 +1,34 @@
-import { NextResponse } from 'next/server'
-import type { NextRequest } from 'next/server'
+import { NextResponse } from 'next/server';
+import type { NextRequest } from 'next/server';
 
 export function middleware(request: NextRequest) {
-    // Exclure les routes dans (preConnection)
-    // if (request.nextUrl.pathname.startsWith('/(preConnection)')) {
-    //     return NextResponse.next();
-    // }
+    const isAuthenticated = request.cookies.has('appwriteSession');
+    const isAuthPage =
+        request.nextUrl.pathname === '/login' ||
+        request.nextUrl.pathname === '/register';
 
-    // Logique du middleware
-    // Vérifie la présence du cookie de session
-    // const sessionCookie = request.cookies.get('appwriteSession')
-    //
-    // if (!sessionCookie) {
-    //     // Si pas de session, redirige vers le login
-    //     return NextResponse.redirect(new URL('/', request.url))
-    // }
+    if (isAuthenticated && isAuthPage) {
+        return NextResponse.redirect(new URL('/', request.url));
+    }
 
-    // Si session valide, passe la requête à la route
-    return NextResponse.next()
+    if (!isAuthenticated && !isAuthPage) {
+        return NextResponse.redirect(new URL('/login', request.url));
+    }
+
+    return NextResponse.next();
 }
+
+export const config = {
+    matcher: [
+        /*
+         * Correspond à toutes les requêtes sauf celles commençant par :
+         * - _next
+         * - static (les fichiers statiques)
+         * - favicon.ico
+         * - images
+         * - (authentification)
+         * - (preConnection)
+         */
+        '/((?!_next|static|favicon.ico|images|\\(authentification\\)|\\(preConnection\\)).*)',
+    ],
+};

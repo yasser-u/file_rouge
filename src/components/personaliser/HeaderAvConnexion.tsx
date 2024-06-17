@@ -16,10 +16,16 @@ const HeaderAvConnexion = () => {
           </li>
           <div className="flex justify-center items-center space-x-8">
             <li>
+              <Link href="./explore">Explorez</Link>
+            </li>
+            <li>
               <Link href="./about">A propos de nous</Link>
             </li>
             <li>
               <Link href="./contact">Contact</Link>
+            </li>
+            <li>
+              <Link href="./mentions_legales">Mentions légales</Link>
             </li>
           </div>
           <div className="flex justify-center items-center space-x-8">

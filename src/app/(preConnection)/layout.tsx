@@ -19,14 +19,14 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-      <html lang="fr" className="h-full">
+      <html lang="fr" >
       <body className="flex flex-col h-full ${inter.className}">
       <QueryProvider>
-          <header>
+          <header className="">
               <HeaderAvConnexion/>
           </header>
 
-          <div className="flex-grow">
+          <div className="flex-grow overflow-auto h-full">
               {children}
           </div>
 
