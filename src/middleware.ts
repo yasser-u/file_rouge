@@ -8,11 +8,11 @@ export function middleware(request: NextRequest) {
         request.nextUrl.pathname === '/sign-up';
 
     if (isAuthenticated && isAuthPage) {
-        return NextResponse.redirect(new URL('/', request.url));
+        return NextResponse.redirect(new URL('/accueil', request.url));
     }
 
     if (!isAuthenticated && !isAuthPage) {
-        return NextResponse.redirect(new URL('/', request.url));
+        return NextResponse.redirect(new URL('/sign-in', request.url));
     }
 
     return NextResponse.next();
@@ -29,6 +29,6 @@ export const config = {
          * - (authentification)
          * - (preConnection)
          */
-        '/((?!_next|static|favicon.ico|images|\\(authentification\\)|\\(preConnection\\)).*)',
+        '/((?!_next|static|favicon.ico|images|\\(authentification\\)|\\(preConnection\\)|\\/).*)',
     ],
 };
