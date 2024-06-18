@@ -40,7 +40,7 @@ export default function Page() {
                             tags: product.tags,
                             createur: product.createur,
                             imagesUrl: product.imagesUrl,
-                            imageIds: product.imagesId,
+                            imagesId: product.imagesId,
                         };
                         return <CardProduit key={product.$id} product={mappedProduct}/>
                     })}
