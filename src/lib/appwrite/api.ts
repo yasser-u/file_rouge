@@ -245,7 +245,7 @@ export async function getCurrentUser() {
             imageId: currentUser.documents[0].imageId,
             imageUrl: currentUser.documents[0].imageUrl,
             name: currentUser.documents[0].name,
-            artisanId: currentUser.documents[0].artisanId.$id,
+            artisanId: currentUser.documents[0].artisanId?.$id,
         };
 
         return user;
@@ -434,6 +434,93 @@ export async function deleteProduct(productId: string) {
     }
 }
 
+export async function getAllProducts( pageParam: number = 0) {
+    try {
+        const products = await databases.listDocuments(
+            appwriteConfig.databaseId,
+            appwriteConfig.produitCollectionId,
+
+        );
+
+        // Map over the products and pick only the fields you're interested in
+        const selectedFields = products.documents.map(product => ({
+            id: product.$id,
+            nom: product.nom,
+            description: product.description,
+            imagesUrl: product.imagesUrl,
+            createur: product.createur?.userId?.name,
+            avatar: product.createur?.userId?.imageUrl,
+        }));
+
+        // console.log(" api - getAllProducts - selectedFields = ",selectedFields);
+
+        // Determine if there is a next page
+        const nextPage = products.total > (pageParam + 1) * 10 ? pageParam + 1 : null;
+
+        return { products: selectedFields, nextPage };
+    } catch (error) {
+        console.error("Error getting all products: ", error);
+        throw error;
+    }
+}
+
+// Fonction pour mettre à jour un produit
+export async function updateProduct(productId: string, product: {
+    nom: string;
+    description: string;
+    tags: string;
+    imagesUrl: URL;
+    imagesId: string;
+    createur: string;
+}, file?: File) {
+    try {
+        let updatedProduct;
+        if (file) {
+            // First, upload the new file
+            const uploadedFile = await uploadArtisanFile(file);
+
+            // If the file upload was successful, update the product
+            if (uploadedFile) {
+                const fileUrl = getFilePreview(uploadedFile.$id);
+
+                // Check if fileUrl is defined before calling updateProduct
+                if (fileUrl) {
+                    // Update the product with the new file links
+                    updatedProduct = await databases.updateDocument(
+                        appwriteConfig.databaseId,
+                        appwriteConfig.produitCollectionId,
+                        productId,
+                        {
+                            ...product,
+                            imagesUrl: fileUrl,
+                            imagesId: uploadedFile.$id
+                        },
+                    );
+
+                    // If the product update was successful, delete the old file
+                    if (updatedProduct) {
+                        await deleteFile(product.imagesId);
+                    }
+                } else {
+                    console.error("No file URL provided");
+                }
+            }
+        } else {
+            // If no new file is provided, update the product without changing the image
+            updatedProduct = await databases.updateDocument(
+                appwriteConfig.databaseId,
+                appwriteConfig.produitCollectionId,
+                productId,
+                product,
+            );
+        }
+
+        return updatedProduct;
+    } catch (error) {
+        console.error("Error updating product: ", error);
+        throw error;
+    }
+}
 
 // --------------------------------------------------------------------------
 
@@ -670,39 +757,3 @@ export async function deleteProduct(productId: string) {
 //     }
 //
 // }
-
-// --------------------------------------------------------------
-
-//
-// const session = await signInAccount({
-//     email: user.email,
-//     password: user.password,
-// });
-//
-// if (!session) {
-//     throw new Error('Session creation failed');
-// }
-//
-// window.alert("SESSION created ...");
-
-
-// if (!newUser) throw new Error('Saving user to DB failed');
-
-// window.alert("newUser created ...");
-
-// cherche la liste des teams
-// const teams = await sdk_teams.get("6648508f0006943bc42f")
-// window.alert("teams listed ..."+ JSON.stringify(teams));
-
-// const teamId = "6648508f0006943bc42f";
-// const redirectUrl = window.location.href;
-// const memberOfArtisan =  await sdk_teams.createMembership(
-//     teamId,
-//     ['artisan'],
-//     newAccount.email,
-//     undefined,
-//     undefined,
-//     redirectUrl
-// );
-//
-// if (!memberOfArtisan) throw new Error('Adding to team artisan failed');

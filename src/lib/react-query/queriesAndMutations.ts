@@ -3,8 +3,10 @@ import {
     useQuery,
     useMutation,
     useQueryClient,
-    useInfiniteQuery, UseMutationOptions,
+     UseMutationOptions,
 } from '@tanstack/react-query';
+import { useInfiniteQuery } from '@tanstack/react-query'
+
 import { QUERY_KEYS } from './queryKeys';
 import {
     createArtisanAccount,
@@ -12,7 +14,7 @@ import {
     signInAccount,
     signOutAccount,
     addProductWithFiles,
-    getProductsByCreator, getCurrentUser, deleteProduct
+    getProductsByCreator, getCurrentUser, deleteProduct, getAllProducts
 } from '../appwrite/api';
 
 /**
@@ -101,6 +103,22 @@ export const useDeleteProductMutation = () => {
     })
 }
 
+export const useUpdateProductMutation = () => {
+
+}
+
+export const useGetAllProductsInfiniteQuery = () => {
+    return useInfiniteQuery({
+        queryKey: [QUERY_KEYS.GET_ALL_PRODUCTS],
+        queryFn: ({ pageParam = 0 }) => getAllProducts(pageParam),
+        getNextPageParam: (lastPage) => lastPage.nextPage,
+        initialPageParam: 0,
+        select: (data) => ({
+            pages: [...data.pages],
+            pageParams: [...data.pageParams],
+        }),
+    });
+}
 // -----------------------------------------------------------
 
 // export const useCreatePostMutation = () => {

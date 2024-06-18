@@ -20,4 +20,6 @@ export enum QUERY_KEYS {
 
     // PRODUCT KEYS
     GET_PRODUCTS_BY_CREATOR = "getProductsByCreator",
+    GET_PRODUCT_BY_ID = "getProductById",
+    GET_ALL_PRODUCTS = "getAllProducts",
 }

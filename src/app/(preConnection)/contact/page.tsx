@@ -36,7 +36,7 @@ export default function Page() {
                 </CardHeader>
                 <CardContent>
                     <form>
-                        <div className="grid w-full items-center gap-5">
+                        <div className="grid w-full items-center gap-5 text-black">
                             <div className="flex flex-col space-y-1.5">
                                 <Input id="name" placeholder="Nom" />
                             </div>
@@ -54,8 +54,8 @@ export default function Page() {
                     </form>
                 </CardContent>
                 <CardFooter className="flex flex-col justify-between gap-4">
-                    <Button>Connexion</Button>
-                    <Button variant="outline">Annuler</Button>
+                    <Button className="w-24">Connexion</Button>
+                    <Button className="w-24" variant="destructive">Annuler</Button>
 
                 </CardFooter>
             </Card>

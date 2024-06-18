@@ -79,5 +79,16 @@ export interface IProduct {
   tags: string;
   createur: string;
   imagesUrl: string;
-  imageIds: string;
+  imagesId: string;
+}
+
+// produits with creator
+export interface IProductWithCreator {
+  id: string;
+  nom: string;
+  description: string;
+  createur: string;
+  avatar: string;
+  imagesUrl: string;
+
 }
